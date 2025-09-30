@@ -6,7 +6,12 @@ import { validationResult } from "express-validator";
 import { createUser } from "../utils/createUser.js";
 import { User } from "../models/user.models.js";
 
-
+const options = {
+  httpOnly: true,      // JS cannot access, safe
+  secure: false,       // true if using HTTPS, false for localhost
+  sameSite: "lax",     // or 'none' + secure: true for cross-site
+  path: "/",
+}
 
 export const signUpController = asyncHandler(async (req,res)=>{
       const errors = validationResult(req);
@@ -46,6 +51,6 @@ export const loginController = asyncHandler(async (req,res)=>{
         console.log(token);
       
     
-    res.status(201).cookie("token",token,{httpOnly:true}).json(new ApiResponse(201,{user},'Logged In successfully'));
+    res.status(201).cookie("token",token,options).json(new ApiResponse(201,{user},'Logged In successfully'));
 });
 

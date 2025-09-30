@@ -12,8 +12,9 @@ connect();
 
  app.use(express.json({limit:'16kb'}));
   app.use(express.static('public'));
+  
 app.use(cors({
-    origin : '*',
+    origin : process.env.FRONTEND_URL,
     credentials:true
 }));
 app.use(cookieParser());
