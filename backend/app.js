@@ -2,7 +2,8 @@ import cookieParser from 'cookie-parser';
 import express from 'express';
 import cors from 'cors';
 import connect from './db/db.js';
-
+import userRouter from './routes/user.routes.js';
+import morgan from 'morgan';
 const app = express();
 
 
@@ -17,6 +18,12 @@ app.use(cors({
 }));
 app.use(cookieParser());
 app.use(express.urlencoded({extended:true}));
+app.use(morgan('dev'));
 
+
+// --------------------------- routes ---------------------------
+
+
+app.use('/users',userRouter);
 
 export default app;
