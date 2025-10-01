@@ -5,7 +5,8 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { validationResult } from "express-validator";
 import { createUser } from "../utils/createUser.js";
 import { User } from "../models/user.models.js";
-
+import Project from "../models/project.models.js";
+import mongoose from "mongoose";
 const options = {
   httpOnly: true,      // JS cannot access, safe
   secure: false,       // true if using HTTPS, false for localhost
@@ -53,4 +54,14 @@ export const loginController = asyncHandler(async (req,res)=>{
     
     res.status(201).cookie("token",token,options).json(new ApiResponse(201,{user},'Logged In successfully'));
 });
+
+export const findProjects = asyncHandler(async (req,res)=>{
+   
+   const user = req.user;
+   const userId = user._id;
+   
+
+   const projects = await Project.findOne({users:userId});
+   res.status(200).json(new ApiResponse(200,projects,'user projects'));
+})
 
