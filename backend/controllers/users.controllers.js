@@ -62,7 +62,7 @@ export const findProjects = asyncHandler(async (req,res)=>{
    
 
    const projects = await Project.find({users:userId}).sort({ createdAt: -1 });
-   console.log(projects);
+  //  console.log(projects);
    res.status(200).json(new ApiResponse(200,projects,'user projects'));
-})
+});
 

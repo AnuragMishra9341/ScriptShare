@@ -2,7 +2,7 @@ import { Router } from "express";
 import { body } from "express-validator";
 import * as userController from '../controllers/users.controllers.js'
 import { authMiddleware } from "../middlewares/auth.middleware.js";
-const router = Router();
+export const router = Router();
 
 router.post('/signUp',
     body('email').isEmail()
@@ -23,5 +23,6 @@ router.post('/login',
 )
 
 router.get('/projects',authMiddleware,userController.findProjects);
+
 
 export default router
