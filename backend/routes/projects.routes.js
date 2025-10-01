@@ -9,5 +9,5 @@ const router = Router();
 
 router.post('/create',authMiddleware,projectController.createProject);
 router.post('/add',authMiddleware,projectController.addUser);
-
+router.get('/fetch-collaborator/:projectId',authMiddleware,projectController.getCollaborators)
 export default router

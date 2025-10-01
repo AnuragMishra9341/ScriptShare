@@ -49,3 +49,25 @@ export const addUser = asyncHandler(async (req, res) => {
   );
    res.status(200).json(new ApiResponse(200,object,'Partner added successfully'));
 });
+
+
+export const getCollaborators = asyncHandler(async (req,res)=>{
+          const { projectId } = req.params;
+
+  // 1. Find the project
+  const project = await Project.findById(projectId);
+
+  if (!project) {
+    res.status(404);
+    throw new Error("Project not found");
+  }
+
+  // 2. Fetch all users whose _id is in project.users
+  const users = await User.find({ _id: { $in: project.users } }).select("email");
+
+  // 3. Map emails
+  const emails = users.map((user) => user.email);
+
+  // 4. Return emails array
+  res.status(200).json({ data: emails })
+})

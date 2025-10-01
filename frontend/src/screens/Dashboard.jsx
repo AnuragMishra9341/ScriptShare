@@ -50,7 +50,10 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen p-6 bg-gray-50">
-      <h1 className="text-4xl font-bold mb-8 text-gray-800">Your Projects</h1>
+      <div className="flex flex-center justify-center">
+         <h1 className="text-4xl font-bold mb-8 text-gray-800 p-3">Your Projects</h1>
+      </div>
+     
 
       {/* Create New Project */}
       <div className="mb-8">

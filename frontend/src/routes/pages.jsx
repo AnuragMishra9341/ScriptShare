@@ -4,7 +4,7 @@ import Login from "../screens/Login.jsx";
 import SignUp from "../screens/SignUp.jsx"
 import Dashboard from "../screens/Dashboard.jsx";
 import ProtectedRoute from "../screens/ProtectedRoute.jsx";
-
+import ChatPage from "../screens/ChatPage.jsx";
 const Pages = () => {
   return (
    <Routes>
@@ -19,7 +19,20 @@ const Pages = () => {
         </ProtectedRoute>
       }
     />
+
+     <Route
+      path="/projects/:projectId/chat"
+      element={
+        <ProtectedRoute>
+          <ChatPage />
+        </ProtectedRoute>
+      }
+    />
+
    </Routes>
+
+   
+
   )
 }
 
