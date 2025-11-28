@@ -25,4 +25,5 @@ router.post('/login',
 router.get('/projects',authMiddleware,userController.findProjects);
 
 
-export default router
+
+export default router ; 
