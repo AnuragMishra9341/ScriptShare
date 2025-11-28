@@ -7,12 +7,16 @@ import { createUser } from "../utils/createUser.js";
 import { User } from "../models/user.models.js";
 import Project from "../models/project.models.js";
 import mongoose from "mongoose";
-const options = {
-  httpOnly: true,      // JS cannot access, safe
-  secure: false,       // true if using HTTPS, false for localhost
-  sameSite: "lax",     // or 'none' + secure: true for cross-site
+const isProd = process.env.NODE_ENV === "production";
+
+const cookieOptions = {
+  httpOnly: true,
+  secure: isProd,                          // true in production (HTTPS required)
+  sameSite: isProd ? "none" : "lax",      // none in production for cross-site; lax locally
   path: "/",
-}
+  maxAge: 7 * 24 * 60 * 60 * 1000         // optional: 7 days
+};
+
 
 export const signUpController = asyncHandler(async (req,res)=>{
       const errors = validationResult(req);
