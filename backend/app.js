@@ -3,7 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import connect from './db/db.js';
 import userRouter from './routes/user.routes.js';
-import morgan from 'morgan';
+// import morgan from 'morgan';
 import projectRouter from './routes/projects.routes.js'
 const app = express();
 
