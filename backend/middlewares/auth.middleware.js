@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken";
 import { User } from "../models/user.models.js";
 
   export const authMiddleware = asyncHandler(async (req,res,next)=>{
-      const token = req.cookies.token || req.headers.authorization.split(' ')[ 1 ];
+      const token = req.cookies.token;
       if(!token){
        throw new ApiError(401,'Token missing or invalid.');
       }
