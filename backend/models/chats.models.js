@@ -1,17 +1,53 @@
+// models/Message.js
 import mongoose from "mongoose";
 
-const chatSchema = new mongoose.Schema({
-  project: { type: mongoose.Schema.Types.ObjectId, ref: "Project" },
-  sender: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-  isAI: { type: Boolean, default: false },
-
-  message: String, // normal text
-  code: {
-    language: String,
-    content: String, // actual code snippet
+const messageSchema = new mongoose.Schema({
+  projectId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Project",
+    required: true,
+    index: true
   },
-
-  type: { type: String, enum: ["text", "code", "mixed"], default: "text" },
+  senderId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: false // AI/system messages may not have user id
+  },
+  senderName: {
+    type: String,
+    required: true
+  },
+  senderType: { // "user" | "ai" | "system"
+    type: String,
+    enum: ["user", "ai", "system"],
+    default: "user"
+  },
+  text: {
+    type: String,
+    default: ""
+  },
+  attachments: [
+    {
+      filename: String,
+      url: String,
+      mimeType: String,
+      code: String // if AI returns inline code
+    }
+  ],
+  createdAt: {
+    type: Date,
+    default: Date.now,
+    index: true
+  },
+  edited: { type: Boolean, default: false },
+  deleted: { type: Boolean, default: false },
+  meta: { type: mongoose.Schema.Types.Mixed }
+}, {
+  timestamps: true
 });
 
-export const Chat = mongoose.model('Chat',chatSchema); 
+// Compound index for retrieving timeline
+messageSchema.index({ projectId: 1, createdAt: -1 });
+
+const Message = mongoose.model("Message", messageSchema);
+export default Message;

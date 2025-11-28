@@ -43,16 +43,24 @@ export const loginController = asyncHandler(async (req,res)=>{
       }
 
       const {email,password} = req.body;
-       const user = await User.findOne({email})
+       const user = await User.findOne({email}).select('+password');
        if(!user){
          throw new ApiError(404,'User not found');
        }
-        const token = user.generateJWT();
 
+       const isValidPassword = await user.isValidPassword(password);
+
+       if(!isValidPassword){
+        throw new ApiError(401,'password is not valid');
+       }
+        
+        const token = user.generateJWT();
+           const userObj = user.toObject();
+            delete userObj.password; 
         console.log(token);
       
-    
-    res.status(201).cookie("token",token,options).json(new ApiResponse(201,{user},'Logged In successfully'));
+         
+    res.status(200).cookie("token",token,options).json(new ApiResponse(200,{user: userObj},'Logged In successfully'));
 });
 
 export const findProjects = asyncHandler(async (req,res)=>{
