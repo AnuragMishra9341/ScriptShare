@@ -20,7 +20,7 @@ app.use(cors({
 }));
 app.use(cookieParser());
 app.use(express.urlencoded({extended:true}));
-app.use(morgan('dev'));
+// app.use(morgan('dev'));
 
 
 // --------------------------- routes ---------------------------
