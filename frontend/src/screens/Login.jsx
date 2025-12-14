@@ -1,7 +1,7 @@
 import React, { useState, useContext,useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "../utils/axiosInstance.js";
-import { UserContext } from "../context/Usercontext.jsx";
+import { UserContext } from "../context/UserContext.jsx";
 
 const Login = () => {
   const navigate = useNavigate();

@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom"; // added useNavigate
 import { io } from "socket.io-client";
 import axios from "../utils/privateApi.js";
 import { FiSend, FiUser } from "react-icons/fi";
-import { UserContext } from "../context/Usercontext.jsx";
+import { UserContext } from "../context/UserContext.jsx";
 
 import hljs from "highlight.js";
 import "highlight.js/styles/github-dark.css";
