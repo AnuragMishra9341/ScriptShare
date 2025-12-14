@@ -8,24 +8,24 @@ import { User } from "../models/user.models.js";
 import Project from "../models/project.models.js";
 import mongoose from "mongoose";
 
-// const isProd = process.env.NODE_ENV === "production";
-
-// const options = {
-//   httpOnly: true,
-//   secure: isProd,                          // true in production (HTTPS required)
-//   sameSite: isProd ? "none" : "lax",      // none in production for cross-site; lax locally
-//   path: "/",
-//   maxAge: 7 * 24 * 60 * 60 * 1000         // optional: 7 days
-// };
-
+const isProd = process.env.NODE_ENV === "production";
 
 const options = {
   httpOnly: true,
-  secure: false,        // ✅ required for localhost (HTTP)
-  sameSite: "lax",      // ✅ required for localhost
+  secure: isProd,                          // true in production (HTTPS required)
+  sameSite: isProd ? "none" : "lax",      // none in production for cross-site; lax locally
   path: "/",
-  maxAge: 7 * 24 * 60 * 60 * 1000
+  maxAge: 7 * 24 * 60 * 60 * 1000         // optional: 7 days
 };
+
+
+// const options = {
+//   httpOnly: true,
+//   secure: false,        // ✅ required for localhost (HTTP)
+//   sameSite: "lax",      // ✅ required for localhost
+//   path: "/",
+//   maxAge: 7 * 24 * 60 * 60 * 1000
+// };
 
 
 export const signUpController = asyncHandler(async (req,res)=>{
