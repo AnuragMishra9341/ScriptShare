@@ -1,6 +1,6 @@
 import React from 'react'
 import Pages from './routes/pages.jsx'
-import { UserProvider } from "./context/Usercontext.jsx";
+import { UserProvider } from "./context/UserContext.jsx";
 import { BrowserRouter as Router } from "react-router-dom";
 const App = () => {
   return (
