@@ -24,6 +24,11 @@ router.post(
   userController.loginController
 );
 
+router.post("/forgot-password",userController.forgotPasswordController);
+router.patch("/update-password",body("password")
+    .isLength({ min: 3 })
+    .withMessage("Password must be atleast of 3 characters"),userController.updatePasswordController);
+
 router.get("/projects", authMiddleware, userController.findProjects);
 
 export default router;
