@@ -6,13 +6,14 @@ import Dashboard from "../screens/Dashboard.jsx";
 import ProtectedRoute from "../screens/ProtectedRoute.jsx";
 import ChatPage from "../screens/ChatPage.jsx";
 import Home from "../screens/Home.jsx";
+import ForgotPassword from "../screens/ForgotPassword.jsx";
 const Pages = () => {
   return (
    <Routes>
      <Route path="/" element={<Home/>} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<SignUp />} />
-
+       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route
       path="/dashboard"
       element={
