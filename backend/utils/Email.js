@@ -50,6 +50,7 @@ export const sendEmail = async (userEmail,otp) => {
   // console.log("Preview URL:", nodemailer.getTestMessageUrl(info));
   // console.log("Email sent:", info.response);
  } catch (error) {
-     throw new Error("Failed to send email");
- }
+    console.error("EMAIL ERROR:", error);
+    throw new Error(error.message || "Failed to send email");
+  }
 };
