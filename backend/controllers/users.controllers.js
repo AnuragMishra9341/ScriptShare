@@ -19,21 +19,21 @@ const generateOTP = () => {
   return otp;
 };
 
-// const options = {
-//   httpOnly: true,
-//   secure: isProd,                          // true in production (HTTPS required)
-//   sameSite: isProd ? "none" : "lax",      // none in production for cross-site; lax locally
-//   path: "/",
-//   maxAge: 7 * 24 * 60 * 60 * 1000         // optional: 7 days
-// };
-
 const options = {
   httpOnly: true,
-  secure: false, // ✅ required for localhost (HTTP)
-  sameSite: "lax", // ✅ required for localhost
+  secure: isProd,                          // true in production (HTTPS required)
+  sameSite: isProd ? "none" : "lax",      // none in production for cross-site; lax locally
   path: "/",
-  maxAge: 7 * 24 * 60 * 60 * 1000,
+  maxAge: 7 * 24 * 60 * 60 * 1000         // optional: 7 days
 };
+
+// const options = {
+//   httpOnly: true,
+//   secure: false, // ✅ required for localhost (HTTP)
+//   sameSite: "lax", // ✅ required for localhost
+//   path: "/",
+//   maxAge: 7 * 24 * 60 * 60 * 1000,
+// };
 
 export const forgotPasswordController = asyncHandler(async (req, res) => {
   const { email } = req.body;
