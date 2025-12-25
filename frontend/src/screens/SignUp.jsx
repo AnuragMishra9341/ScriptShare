@@ -5,7 +5,7 @@ import axios from "../utils/axiosInstance";
 const Signup = () => {
   const navigate = useNavigate();
 
-  const [step, setStep] = useState(1); // 1=email, 2=otp
+  const [step, setStep] = useState(1);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [otp, setOtp] = useState("");
@@ -35,11 +35,7 @@ const Signup = () => {
 
     setLoading(true);
     try {
-      await axios.post("/users/signUp", {
-        email,
-        password,
-        otp,
-      });
+      await axios.post("/users/signUp", { email, password, otp });
       navigate("/login");
     } catch (err) {
       setError(err.response?.data?.message || "Signup failed");
@@ -49,54 +45,96 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-xl w-full max-w-md shadow-lg">
-        <h2 className="text-2xl font-bold text-center mb-6">Create Account</h2>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-100 to-indigo-100 px-4">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
+        
+        {/* Header */}
+        <h2 className="text-3xl font-bold text-center text-gray-800">
+          Create Account
+        </h2>
+        <p className="text-sm text-gray-500 text-center mt-2">
+          {step === 1 ? "Sign up with your email" : "Verify OTP to continue"}
+        </p>
 
-        {error && <p className="text-red-600 mb-4 text-center">{error}</p>}
+        {/* Error */}
+        {error && (
+          <div className="mt-4 bg-red-50 text-red-600 text-sm px-4 py-2 rounded-lg text-center">
+            {error}
+          </div>
+        )}
 
+        {/* Step 1 */}
         {step === 1 && (
-          <form onSubmit={sendOTP} className="space-y-4">
-            <input
-              type="email"
-              placeholder="Email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full border p-3 rounded"
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full border p-3 rounded"
-            />
-            <button className="w-full bg-purple-500 text-white py-3 rounded">
+          <form onSubmit={sendOTP} className="mt-6 space-y-5">
+            <div>
+              <label className="text-sm font-medium text-gray-600">
+                Email address
+              </label>
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                className="mt-1 w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+              />
+            </div>
+
+            <div>
+              <label className="text-sm font-medium text-gray-600">
+                Password
+              </label>
+              <input
+                type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                className="mt-1 w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+              />
+            </div>
+
+            <button
+              disabled={loading}
+              className="w-full rounded-lg bg-purple-600 py-3 text-white font-semibold hover:bg-purple-700 transition disabled:opacity-60"
+            >
               {loading ? "Sending OTP..." : "Send OTP"}
             </button>
           </form>
         )}
 
+        {/* Step 2 */}
         {step === 2 && (
-          <form onSubmit={signup} className="space-y-4">
-            <input
-              type="text"
-              placeholder="Enter 6-digit OTP"
-              value={otp}
-              onChange={(e) => setOtp(e.target.value)}
-              className="w-full border p-3 rounded"
-            />
-            <button className="w-full bg-purple-500 text-white py-3 rounded">
+          <form onSubmit={signup} className="mt-6 space-y-5">
+            <div>
+              <label className="text-sm font-medium text-gray-600">
+                Enter OTP
+              </label>
+              <input
+                type="text"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                placeholder="6-digit code"
+                className="mt-1 w-full text-center tracking-widest rounded-lg border border-gray-300 px-4 py-3 text-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+              />
+            </div>
+
+            <button
+              disabled={loading}
+              className="w-full rounded-lg bg-purple-600 py-3 text-white font-semibold hover:bg-purple-700 transition disabled:opacity-60"
+            >
               {loading ? "Signing up..." : "Verify & Signup"}
             </button>
           </form>
         )}
 
-        <p className="mt-4 text-center text-gray-600">
+        {/* Footer */}
+        <p className="mt-6 text-center text-sm text-gray-600">
           Already have an account?{" "}
-          <Link to="/login" className="text-purple-500">
+          <Link
+            to="/login"
+            className="font-semibold text-purple-600 hover:underline"
+          >
             Login
           </Link>
         </p>
