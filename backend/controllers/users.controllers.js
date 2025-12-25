@@ -51,6 +51,7 @@ export const forgotPasswordController = asyncHandler(async (req, res) => {
    if(!otp){
     throw new ApiError(500,"otp cannot be generated");
    }
+  //  console.log(otp);
   const forgotToken = jwt.sign(
     { email },
     process.env.JWT_SECRET,
@@ -67,7 +68,9 @@ export const forgotPasswordController = asyncHandler(async (req, res) => {
   
   });
 
-  await sendEmail(email, otp);
+   const rp = await sendEmail(email, otp);
+
+  //  console.log(rp);
 
   res
     .status(200)
@@ -210,7 +213,7 @@ export const loginController = asyncHandler(async (req, res) => {
   const token = user.generateJWT();
   const userObj = user.toObject();
   delete userObj.password;
-  console.log(token);
+  // console.log(token);
 
   res
     .status(200)

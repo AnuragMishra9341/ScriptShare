@@ -1,56 +1,34 @@
-import nodemailer from "nodemailer";
+import SibApiV3Sdk from "sib-api-v3-sdk";
 
-export const sendEmail = async (userEmail,otp) => {
- try {
-   // 1. Create transporter
-  // let testAccount = await nodemailer.createTestAccount();
-  const transporter = nodemailer.createTransport({
- host: "smtp.gmail.com",
-  port: 465,
-  secure: true, // IMPORTANT
-    auth: {
-      user: process.env.EMAIL_USER, // your Gmail address
-      pass: process.env.EMAIL_PASS, // app password from Google
+// Configure Brevo client
+const client = SibApiV3Sdk.ApiClient.instance;
+client.authentications["api-key"].apiKey = process.env.BREVO_API_KEY;
 
-    },
-  });
+export const sendEmail = async (userEmail, otp) => {
+  try {
+    // console.log(" Sending email to:", userEmail);
 
-  // 2. Mail options
-  const mailOptions = {
-    from: `"ShareScript" <${process.env.EMAIL_USER}>`,
-    to: userEmail,
-    subject: "Verify your email (OTP)",
-    text: `Your OTP is ${otp}. It is valid for 15 minutes.`,
-    html:`
-    <div style="font-family: Arial, sans-serif;">
-      <h2>Email Verification</h2>
-      <p>Your OTP is:</p>                   
-      <h1 style="letter-spacing: 3px;">${otp}</h1>
-      <p>This OTP is valid for <b>15 minutes</b>.</p>
-      <p>If you didn’t request this, please ignore this email.</p>
-    </div>
-  `,
-  };
+    const api = new SibApiV3Sdk.TransactionalEmailsApi();
 
-  // 3. Send email
-  const info = await transporter.sendMail(mailOptions);
+    const response = await api.sendTransacEmail({
+      sender: {
+        name: "ShareScript",
+        email: process.env.EMAIL_USER, // works FREE, no domain needed
+      },
+      to: [{ email: userEmail }],
+      subject: "Verify your email (OTP)",
+      htmlContent: `
+        <h2>Email Verification</h2>
+        <h1>${otp}</h1>
+        <p>Valid for 15 minutes</p>
+      `,
+    });
 
-  return {
-      messageId: info.messageId,
-      response: info.response,
-      accepted: info.accepted,
-    };
+    // console.log(" Brevo response:", response);
+    return response;
 
-
-
-  // console.log(info)
-  // console.log("Message sent:", info.messageId);
-
-  // //  This gives you the preview link
-  // console.log("Preview URL:", nodemailer.getTestMessageUrl(info));
-  // console.log("Email sent:", info.response);
- } catch (error) {
-    console.error("EMAIL ERROR:", error);
+  } catch (error) {
+    console.error(" BREVO EMAIL ERROR:", error);
     throw new Error(error.message || "Failed to send email");
   }
 };
