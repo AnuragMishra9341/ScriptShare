@@ -25,13 +25,14 @@ const otpSchema = new mongoose.Schema(
       type: Date,
       required: true,
       default: () => new Date(Date.now() + 15 * 60 * 1000),
-      index: { expires: 0 }, // ✅ auto delete per document
+      index: { expires: 0 }, //  auto delete per document
+      // * This is a TTL(Time-to-live) index that automatically deletes the document once expiresAt time is reached
     },
   },
   { timestamps: true }
 );
 
-// 🔥 Fetch latest OTP fast
+//  Fetch latest OTP fast
 otpSchema.index({ email: 1, createdAt: -1 });
 
 
@@ -39,6 +40,7 @@ otpSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
     return next();
   }
+
   this.password =  await bcrypt.hash(this.password, 10);
   return next();
 });

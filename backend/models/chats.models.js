@@ -17,9 +17,9 @@ const messageSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  senderType: { // "user" | "ai" | "system"
+  senderType: { // "user" | "ai" 
     type: String,
-    enum: ["user", "ai", "system"],
+    enum: ["user", "ai"],
     default: "user"
   },
   text: {
@@ -41,10 +41,11 @@ const messageSchema = new mongoose.Schema({
   },
   edited: { type: Boolean, default: false },
   deleted: { type: Boolean, default: false },
-  meta: { type: mongoose.Schema.Types.Mixed }
+  meta: { type: mongoose.Schema.Types.Mixed } // can store any type of data
 }, {
   timestamps: true
 });
+
 
 // Compound index for retrieving timeline
 messageSchema.index({ projectId: 1, createdAt: -1 });

@@ -7,6 +7,11 @@ import { generateResult } from "./utils/AiResults.js";
 import mongoose from "mongoose";
 import Message from "./models/chats.models.js"; // new model
 import Project from "./models/project.models.js"; // optional membership check if you have it
+import cookie from "cookie";
+import { User } from "./models/user.models.js";
+import jwt from "jsonwebtoken";
+
+
 
 dotenv.config({ path: "./.env" });
 
@@ -19,6 +24,45 @@ const io = new Server(server, {
   },
 });
 
+
+
+
+
+
+
+
+//   SOCKET AUTH MIDDLEWARE 
+io.use(async (socket, next) => {
+  try {
+    const rawCookie = socket.handshake.headers.cookie;
+    if (!rawCookie) return next(new Error("No cookies"));
+
+    const cookies = cookie.parse(rawCookie);
+    const token = cookies.token;
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    const user = await User.findOne({ email: decoded.email })
+      .select("_id email");
+
+    if (!user) return next(new Error("User not found"));
+
+    socket.user = {
+      id: user._id.toString(),
+      email: user.email,
+    };
+
+    next(); 
+  } catch (err) {
+    next(new Error("Authentication failed"));
+  }
+});
+
+
+
+
+
+
 // helper: load last N messages for a project
 async function loadHistory(projectId, limit = 100) {
   // newest-first internally then reverse to send oldest->newest
@@ -30,34 +74,37 @@ async function loadHistory(projectId, limit = 100) {
 }
 
 io.on("connection", (socket) => {
-  console.log("A user connected:", socket.id);
+  console.log("Authenticated socket connected:", socket.user.email);
 
   // Client should call joinRoom with: { projectId, userId, userName } (or your auth flow)
   socket.on("joinRoom", async (payload) => {
     try {
-      const { projectId, userId, userName } = payload || {};
+      const { projectId } = payload || {};
       if (!projectId) return;
-
-      // Optional: verify membership before joining (recommended)
-      // const project = await Project.findById(projectId).select("users");
-      // if (!project || !project.users.map(u => u.toString()).includes(userId)) {
-      //   socket.emit("error", { message: "Not a member of the project" });
-      //   return;
-      // }
-
-      socket.join(projectId);
-      socket.projectId = projectId;
-      socket.userId = userId;
-      socket.userName = userName || "Unknown";
-
-      // Send chat history to only the joining socket
-      const history = await loadHistory(projectId, 200); // change limit as needed
-      socket.emit("history", history);
-      console.log(`Socket ${socket.id} joined project room: ${projectId} and received history`);
-    } catch (err) {
-      console.error("joinRoom error:", err);
-      socket.emit("error", { message: "Could not join room" });
+//  Authorization check
+    const project = await Project.findById(projectId).select("users");
+    if (
+      !project ||
+      !project.users.map(id => id.toString()).includes(socket.user.id)
+    ) {
+      socket.emit("error", { message: "Unauthorized to join this project" });
+      return;
     }
+
+    socket.join(projectId);
+    socket.projectId = projectId;
+
+    // Send history
+    const history = await loadHistory(projectId, 200);
+    socket.emit("history", history);
+
+    console.log(
+      `User ${socket.user.email} joined project ${projectId}`
+    );
+  } catch (err) {
+    console.error("joinRoom error:", err);
+    socket.emit("error", { message: "Could not join room" });
+  }
   });
 
   // Handle incoming message from client
@@ -71,14 +118,15 @@ io.on("connection", (socket) => {
 
       // Build message doc
       const messageDoc = {
-        projectId,
-        senderId: socket.userId || msg.senderId,
-        senderName: socket.userName || msg.senderName || (msg.sender && msg.sender.name) || "Unknown",
-        senderType: "user",
-        text: msg.text || "",
-        attachments: msg.attachments || [],
-        createdAt: new Date()
-      };
+  projectId,
+  senderId: socket.user.id,
+  senderName: socket.user.email,
+  senderType: "user",
+  text: msg.text || "",
+  attachments: msg.attachments || [],
+  createdAt: new Date()
+};
+
 
       // Save user message to DB
       const saved = await Message.create(messageDoc);

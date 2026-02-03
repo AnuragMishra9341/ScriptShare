@@ -29,8 +29,8 @@ const options = {
 
 // const options = {
 //   httpOnly: true,
-//   secure: false, // ✅ required for localhost (HTTP)
-//   sameSite: "lax", // ✅ required for localhost
+//   secure: false, // required for localhost (HTTP)
+//   sameSite: "lax", //  required for localhost
 //   path: "/",
 //   maxAge: 7 * 24 * 60 * 60 * 1000,
 // };
